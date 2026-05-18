@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
 const { Relay } = require('bedrock-protocol')
-const { normalizeBedrockVersion } = require('../src/version')
+const { normalizeBedrockVersion } = require('prismarine-bedrock')
 
 const DEFAULT_VERSION = '1.26.20'
 

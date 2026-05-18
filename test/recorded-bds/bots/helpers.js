@@ -1,7 +1,6 @@
 "use strict";
 
-const BotState = require("../../..").BotState || require("../../../src/state");
-const { bedrockVersionFromEnv } = require("../../../src/version");
+const { BotState, bedrockVersionFromEnv } = require("prismarine-bedrock");
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 

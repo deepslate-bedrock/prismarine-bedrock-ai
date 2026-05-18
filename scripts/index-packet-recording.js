@@ -6,7 +6,7 @@ const path = require("path");
 const readline = require("readline");
 const Database = require("better-sqlite3");
 const { createDeserializer } = require("bedrock-protocol/src/transforms/serializer");
-const { bedrockVersionFromEnv, normalizeBedrockVersion } = require("../src/version");
+const { bedrockVersionFromEnv, normalizeBedrockVersion } = require("prismarine-bedrock");
 
 function usage() {
   const script = path.relative(process.cwd(), __filename);

@@ -4,7 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const { bedrockVersionFromEnv } = require("../src/version");
+const { bedrockVersionFromEnv } = require("prismarine-bedrock");
 
 const ROOT = path.resolve(__dirname, "..");
 const SCENARIO_DIR = path.join(ROOT, "test", "recorded-bds", "scenarios");

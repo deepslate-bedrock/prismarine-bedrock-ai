@@ -1,7 +1,7 @@
 "use strict";
 
 const Vec3 = require("vec3").Vec3;
-const { itemToRaw, toVec3f } = require("../../../src/utils");
+const { utils: { itemToRaw, toVec3f } } = require("prismarine-bedrock");
 const {
   connectScenarioBot,
   disconnectQuietly,

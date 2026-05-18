@@ -1,0 +1,8 @@
+node_modules/
+.env/
+pnpm-lock.yaml
+logs/
+.e2e-servers/
+scripts/tmp/
+*.pyc
+__pycache__/

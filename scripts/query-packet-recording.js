@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 const { createDeserializer } = require("bedrock-protocol/src/transforms/serializer");
-const { bedrockVersionFromEnv, normalizeBedrockVersion } = require("../src/version");
+const { bedrockVersionFromEnv, normalizeBedrockVersion } = require("prismarine-bedrock");
 
 function usage() {
   const script = path.relative(process.cwd(), __filename);

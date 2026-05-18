@@ -1,0 +1,35 @@
+{
+  "name": "prismarine-bedrock-ai",
+  "version": "0.0.1",
+  "description": "AI agent workflows, packet parity tooling, and recorded Bedrock scenario lab for prismarine-bedrock.",
+  "private": false,
+  "type": "commonjs",
+  "scripts": {
+    "test": "pnpm run test:static",
+    "test:static": "mocha \"test/static/**/*.test.js\"",
+    "test:live:shard": "node scripts/e2e-live-client.js",
+    "e2e:servers:install": "node scripts/e2e-servers.js install",
+    "e2e:servers:launch": "node scripts/e2e-servers.js launch",
+    "e2e:servers:cleanup-orphans": "node scripts/e2e-servers.js cleanup-orphans",
+    "recorded-bds:gym": "node scripts/recorded-bds-gym.js",
+    "recorded-bds:relay": "node scripts/recorded-bds-relay.js"
+  },
+  "keywords": [
+    "minecraft",
+    "bedrock",
+    "codex",
+    "packet-capture"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "bedrock-protocol": "^3.55.0",
+    "better-sqlite3": "^12.10.0",
+    "prismarine-bedrock": "github:GenerelSchwerz/prismarine-bedrock#migration/base-cleanup",
+    "vec3": "^0.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^11.7.5"
+  }
+}
