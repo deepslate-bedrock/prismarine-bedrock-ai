@@ -27,7 +27,7 @@
   "dependencies": {
     "bedrock-protocol": "^3.55.0",
     "better-sqlite3": "^12.10.0",
-    "prismarine-bedrock": "github:GenerelSchwerz/prismarine-bedrock#migration/base-cleanup",
+    "prismarine-bedrock": "github:deepslate-bedrock/prismarine-bedrock#main",
     "vec3": "^0.2.0"
   },
   "devDependencies": {
