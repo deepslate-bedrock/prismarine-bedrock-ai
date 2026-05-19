@@ -144,7 +144,7 @@ Before stopping, even on failure:
 - `test/live/`: tests that connect to a local Bedrock/Geyser target.
 - `scripts/roundtrip-packet.js`: local Bedrock protocol serializer/deserializer check.
 - `scripts/e2e-servers.js`: local Endstone/BDS and Java/Geyser launcher.
-- `ref/`: gitignored external/reference checkouts. Do not treat these as repo source.
+- `ref/`: gitignored external/reference checkouts. Do not treat these as repo source. When working from `prismarine-bedrock-workspace`, shared checkouts may instead live at workspace-root `ref/`.
 - `ref/bedrock-protocol-docs/`: local clone of Mojang Bedrock protocol docs.
 - `ref/geyser/`: local Geyser checkout for translator inspection.
 - `ref/gophertunnel/`: local Gophertunnel checkout for Bedrock protocol reference.

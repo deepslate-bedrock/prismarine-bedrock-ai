@@ -7,6 +7,7 @@ const path = require('path')
 
 const {
   activeScenarioPlayers,
+  createRuntime,
   hasCompletedScenarioEnd,
   joinedPlayerName,
   normalizeServerLogLine,
@@ -16,6 +17,34 @@ const {
 } = require('../../scripts/e2e-server/runtime')
 
 describe('e2e server runtime helpers', function () {
+  it('waits for a readiness probe after the server ready log line', async function () {
+    const probe = deferred()
+    const runtime = await createRuntime([{ name: 'endstone-1' }], {
+      serverReadyTimeoutMs: 5000
+    })
+    let ready = false
+
+    runtime.launch('endstone-1', 'server', process.execPath, [
+      '-e',
+      "console.log('Server started.'); setInterval(() => {}, 1000)"
+    ], process.cwd(), {}, {
+      readyPattern: /\bServer started\./,
+      readyProbe: () => probe.promise
+    })
+
+    const wait = runtime.waitForServersReady().then(() => {
+      ready = true
+    })
+
+    await delay(300)
+    assert.strictEqual(ready, false)
+    probe.resolve({ motd: 'ready after ping' })
+    await wait
+    assert.strictEqual(ready, true)
+
+    await runtime.stopAll('test_complete')
+  })
+
   it('recognizes Java and Geyser join lines for auto-op', function () {
     assert.strictEqual(
       joinedPlayerName('[20:16:51] [Server thread/INFO]: .OpBot joined the game'),
@@ -131,3 +160,17 @@ describe('e2e server runtime helpers', function () {
     }], startedAt), /Alex still connected/)
   })
 })
+
+function deferred () {
+  let resolve
+  let reject
+  const promise = new Promise((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise
+    reject = rejectPromise
+  })
+  return { promise, resolve, reject }
+}
+
+function delay (ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}

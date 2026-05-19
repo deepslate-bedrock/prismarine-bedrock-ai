@@ -75,6 +75,8 @@ async function createRuntime(targetInstances, options) {
         activeRuns,
         ready: kind !== "server",
         readyPattern: spawnOptions.readyPattern || null,
+        readyProbe: spawnOptions.readyProbe || null,
+        readyProbeStarted: false,
         autoOppedPlayers: new Set()
       };
       processes.set(name, record);
@@ -219,6 +221,26 @@ async function createRuntime(targetInstances, options) {
     markServerReady(record, line) {
       if (record.kind !== "server" || record.ready) return;
       if (!record.readyPattern || !record.readyPattern.test(line)) return;
+      if (record.readyProbe && !record.readyProbeStarted) {
+        record.readyProbeStarted = true;
+        writeEvent(record, combined, "server_ready_probe_start", { line });
+        console.log(`[${record.name}] waiting for Bedrock status ping...`);
+        void record.readyProbe()
+          .then((result) => {
+            if (record.ready || record.exited) return;
+            record.ready = true;
+            writeEvent(record, combined, "server_ready", { line, probe: result || null });
+            console.log(`[${record.name}] ready`);
+            resolveReadyWaitersIfReady();
+          })
+          .catch((err) => {
+            const message = err?.message || String(err);
+            writeEvent(record, combined, "server_ready_probe_error", { line, message });
+            console.error(`[${record.name}] readiness probe failed: ${message}`);
+            rejectReadyWaiters(err instanceof Error ? err : new Error(message));
+          });
+        return;
+      }
       record.ready = true;
       writeEvent(record, combined, "server_ready", { line });
       console.log(`[${record.name}] ready`);

@@ -32,6 +32,7 @@ async function launchTargets(targetInstances, options) {
         "nogui"
       ], instance.dir, {}, {
         readyPattern: serverReadyPattern(instance),
+        readyProbe: bedrockReadyProbe(instance, options),
         usage: launchUsage(instance)
       });
     }
@@ -49,6 +50,7 @@ async function launchTargets(targetInstances, options) {
         repoRoot: ROOT
       }), {
         readyPattern: serverReadyPattern(instance),
+        readyProbe: bedrockReadyProbe(instance, options),
         usage: launchUsage(instance)
       });
     }
@@ -73,6 +75,20 @@ function serverReadyPattern(instance) {
   return /\bServer started\./;
 }
 
+function bedrockReadyProbe(instance, options) {
+  if (!instance.bedrockPort) return null;
+  const host = process.env.HOST || "127.0.0.1";
+  return async () => {
+    const advertisement = await waitForBedrockPing(host, instance.bedrockPort, options.serverReadyTimeoutMs);
+    return {
+      host,
+      port: instance.bedrockPort,
+      motd: advertisement?.motd || null,
+      version: advertisement?.version || null
+    };
+  };
+}
+
 function launchUsage(instance) {
   return {
     kind: instance.type,
@@ -86,4 +102,4 @@ function launchUsage(instance) {
   };
 }
 
-module.exports = { launchTargets };
+module.exports = { launchTargets, bedrockReadyProbe, serverReadyPattern };
