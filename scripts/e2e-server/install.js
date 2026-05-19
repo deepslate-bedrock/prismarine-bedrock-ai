@@ -364,13 +364,25 @@ function endstonePackageCache(source) {
     .replace(/[^a-z0-9._-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 48) || "endstone";
-  const rootDir = path.join(CACHE_DIR, "endstone-packages", `${slug}-${hash}`);
+  const rootDir = path.join(endstonePackageCacheBaseDir(), `${slug}-${hash}`);
 
   return {
     rootDir,
     venvDir: path.join(rootDir, ".venv"),
     templateDir: path.join(rootDir, "bds-template")
   };
+}
+
+function endstonePackageCacheBaseDir() {
+  if (process.env.E2E_ENDSTONE_PACKAGE_CACHE_DIR) {
+    return path.resolve(process.env.E2E_ENDSTONE_PACKAGE_CACHE_DIR);
+  }
+
+  if (os.platform() === "win32") {
+    return path.join(os.tmpdir(), "pb-e2e", "endstone-packages");
+  }
+
+  return path.join(CACHE_DIR, "endstone-packages");
 }
 
 async function cleanInstanceWorlds(instance, options) {
