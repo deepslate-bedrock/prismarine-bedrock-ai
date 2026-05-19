@@ -4,5 +4,6 @@ pnpm-lock.yaml
 logs/
 .e2e-servers/
 scripts/tmp/
+ref/
 *.pyc
 __pycache__/

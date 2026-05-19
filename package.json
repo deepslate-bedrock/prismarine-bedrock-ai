@@ -10,6 +10,7 @@
     "test:live:shard": "node scripts/e2e-live-client.js",
     "e2e:servers:install": "node scripts/e2e-servers.js install",
     "e2e:servers:launch": "node scripts/e2e-servers.js launch",
+    "e2e:servers:status": "node scripts/e2e-servers.js status",
     "e2e:servers:cleanup-orphans": "node scripts/e2e-servers.js cleanup-orphans",
     "recorded-bds:gym": "node scripts/recorded-bds-gym.js",
     "recorded-bds:relay": "node scripts/recorded-bds-relay.js"

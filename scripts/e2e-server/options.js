@@ -7,6 +7,13 @@ const DEFAULT_ENDSTONE_PACKAGE = "endstone";
 
 function parseCli(argv) {
   const command = argv[2] || "help";
+  const helpIndex = argv.slice(3).findIndex((arg) => arg === "--help" || arg === "-h");
+  if (helpIndex !== -1) {
+    const options = parseOptions(argv.slice(3, helpIndex + 3));
+    options.targets = parseTargets(options.target);
+    return { command: "help", options };
+  }
+
   const options = parseOptions(argv.slice(3));
   options.targets = parseTargets(options.target);
   return { command, options };

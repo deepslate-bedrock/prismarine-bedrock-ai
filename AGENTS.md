@@ -149,6 +149,7 @@ Before stopping, even on failure:
 - `ref/geyser/`: local Geyser checkout for translator inspection.
 - `ref/gophertunnel/`: local Gophertunnel checkout for Bedrock protocol reference.
 - `ref/boar/`: local Boar anticheat checkout for Bedrock physics reference.
+- Other `ref/<name>/` checkouts may be added for local source inspection. Keep them gitignored unless a checkout becomes a reproducible test fixture or generated-input dependency.
 
 ## Required Reading By Area
 
@@ -170,7 +171,7 @@ Use `src/version.js` for the default version and helpers such as `minecraftDataB
 Use Mojang's protocol docs as the first semantic reference when a packet field's meaning is ambiguous or when modeling protocol behavior. Prefer these docs for packet intent, server-authoritative movement semantics, expected server responses, actor flags, and field-specific caveats; use `minecraft-data` for the exact installed serializer shape. A local gitignored clone lives at:
 
 ```powershell
-cd C:\Users\owner\Documents\github\bedrock-test\ref\bedrock-protocol-docs
+cd ref\bedrock-protocol-docs
 ```
 
 Useful docs entrypoints:
@@ -199,7 +200,7 @@ For crafting, inventory, or trading behavior, verify these schema entries:
 Use Gophertunnel as an additional protocol reference when `minecraft-data` names are unclear or when you need action/status enum context. The local checkout is intentionally gitignored:
 
 ```powershell
-cd C:\Users\owner\Documents\github\bedrock-test\ref\gophertunnel
+cd ref\gophertunnel
 ```
 
 Useful Gophertunnel entrypoints:
@@ -314,7 +315,7 @@ Treat Geyser as part of the system under test, not as a perfect oracle. After lo
 Local checkout:
 
 ```powershell
-cd C:\Users\owner\Documents\github\bedrock-test\ref\geyser
+cd ref\geyser
 ```
 
 Useful entrypoints:

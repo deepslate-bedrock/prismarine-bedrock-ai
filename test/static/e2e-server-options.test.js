@@ -3,6 +3,7 @@
 const assert = require('assert')
 
 const {
+  parseCli,
   parseOptions,
   shellJoin,
   splitCommandLine
@@ -94,5 +95,12 @@ describe('e2e server options', function () {
       if (previousInterval === undefined) delete process.env.E2E_SCENARIO_PROGRESS_INTERVAL_MS
       else process.env.E2E_SCENARIO_PROGRESS_INTERVAL_MS = previousInterval
     }
+  })
+
+  it('prints help when requested after a subcommand', function () {
+    const parsed = parseCli(['node', 'scripts/e2e-servers.js', 'launch', '--target=endstone', '--help'])
+
+    assert.strictEqual(parsed.command, 'help')
+    assert.deepStrictEqual(parsed.options.targets, new Set(['endstone']))
   })
 })
