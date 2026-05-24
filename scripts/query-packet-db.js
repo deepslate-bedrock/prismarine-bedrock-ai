@@ -12,10 +12,11 @@ function usage() {
     [--after-event=step_start] [--after-where=step=open_table]
     [--before-event=step_complete] [--before-where=step=open_table]
     [--field=params.requests.0.request_id] [--field=action:params.requests.0.actions.0.type_id]
-    [--sample=10] [--limit=100] [--sql]
+    [--sample=10] [--limit=100] [--events] [--sql]
 
 Queries a SQLite index created by scripts/index-packet-recording.js.
 Paths in --where may use * as a packet_fields wildcard. Event --*-where paths are read from event_json.
+Use --events to list recording events instead of decoded packets.
 `);
 }
 
@@ -39,6 +40,7 @@ const options = {
   fields: [],
   sample: null,
   limit: null,
+  events: false,
   printSql: false
 };
 
@@ -55,6 +57,7 @@ for (const arg of args) {
   else if (arg.startsWith("--field=")) options.fields.push(parseField(arg.slice("--field=".length)));
   else if (arg.startsWith("--sample=")) options.sample = positiveInt(arg.slice("--sample=".length), "--sample");
   else if (arg.startsWith("--limit=")) options.limit = positiveInt(arg.slice("--limit=".length), "--limit");
+  else if (arg === "--events") options.events = true;
   else if (arg === "--sql") options.printSql = true;
   else throw new Error(`Unknown argument: ${arg}`);
 }
@@ -62,9 +65,23 @@ for (const arg of args) {
 const db = new Database(path.resolve(dbFile), { readonly: true });
 try {
   const bounds = eventBounds(db, options);
-  const query = buildPacketQuery(options, bounds);
+  const query = options.events ? buildEventQuery(options, bounds) : buildPacketQuery(options, bounds);
   if (options.printSql) console.error(query.sql, query.params);
   for (const row of db.prepare(query.sql).iterate(query.params)) {
+    if (options.events) {
+      const event = row.event_json ? JSON.parse(row.event_json) : null;
+      const output = baseEventOutput(row);
+      if (options.fields.length) {
+        for (const field of options.fields) {
+          output[field.label] = valueAtPath({ ...row, event }, field.path);
+        }
+      } else {
+        output.event = event;
+      }
+      console.log(JSON.stringify(output));
+      continue;
+    }
+
     const decoded = row.decoded_json ? JSON.parse(row.decoded_json) : null;
     const output = baseOutput(row);
     if (options.fields.length) {
@@ -173,6 +190,50 @@ function buildPacketQuery(opts, bounds) {
   };
 }
 
+function buildEventQuery(opts, bounds) {
+  const where = [];
+  const params = {};
+  if (opts.player) {
+    where.push("player = @player");
+    params.player = opts.player;
+  }
+  if (bounds.after !== null) {
+    where.push("sequence >= @after_sequence");
+    params.after_sequence = bounds.after;
+  }
+  if (bounds.before !== null) {
+    where.push("sequence <= @before_sequence");
+    params.before_sequence = bounds.before;
+  }
+  opts.where.forEach((predicate, index) => {
+    where.push(`json_extract(event_json, @event_path_${index}) = @event_value_${index}`);
+    params[`event_path_${index}`] = jsonPath(predicate.path);
+    params[`event_value_${index}`] = predicate.expected;
+  });
+
+  const innerWhere = where.length ? `where ${where.join(" and ")}` : "";
+  const sampleWhere = opts.sample ? "where row_number % @sample = 1" : "";
+  if (opts.sample) params.sample = opts.sample;
+  const limit = opts.limit ? "limit @limit" : "";
+  if (opts.limit) params.limit = opts.limit;
+
+  return {
+    sql: `
+      with filtered as (
+        select events.*, row_number() over (order by sequence) as row_number
+        from events
+        ${innerWhere}
+      )
+      select *
+      from filtered
+      ${sampleWhere}
+      order by sequence
+      ${limit}
+    `,
+    params
+  };
+}
+
 function baseOutput(row) {
   return {
     sequence: row.sequence,
@@ -181,6 +242,17 @@ function baseOutput(row) {
     packet_id: row.packet_id,
     name: row.name,
     player: row.player
+  };
+}
+
+function baseEventOutput(row) {
+  return {
+    sequence: row.sequence,
+    ts: row.ts,
+    type: row.type,
+    player: row.player,
+    step: row.step,
+    step_index: row.step_index
   };
 }
 

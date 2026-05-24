@@ -1,0 +1,105 @@
+{
+  "id": "repeat-respawn",
+  "autoOp": true,
+  "gamemode": "survival",
+  "spawn": [0, 65, 0, 0, 0],
+  "setupCommands": [
+    "clear {player}",
+    "time set day",
+    "weather clear",
+    "difficulty peaceful",
+    "gamerule keepinventory true",
+    "gamerule doImmediateRespawn false",
+    "effect {player} clear",
+    "fill -3 64 -3 3 70 3 air",
+    "fill -3 63 -3 3 63 3 grass_block",
+    "spawnpoint {player} 0 65 0",
+    "tp {player} 0 65 0 0 0"
+  ],
+  "completeTitle": "Recording complete",
+  "completeMessage": "The repeated respawn recording is complete. You can leave the game.",
+  "debugRecordEvents": [
+    "PlayerDeathEvent",
+    "PlayerRespawnEvent"
+  ],
+  "steps": [
+    {
+      "id": "respawn-first-time",
+      "commands": [
+        {
+          "delayTicks": 20,
+          "command": "kill {player}"
+        }
+      ],
+      "instructions": [
+        "Wait for the server to kill you.",
+        "Press Respawn once the death screen appears."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "endstone_event_seen",
+            "event": "PlayerRespawnEvent",
+            "count": 1
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "respawn-second-time",
+      "commands": [
+        {
+          "delayTicks": 20,
+          "command": "kill {player}"
+        }
+      ],
+      "instructions": [
+        "Wait for the server to kill you again.",
+        "Press Respawn again. This step checks the second consecutive respawn."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "endstone_event_seen",
+            "event": "PlayerRespawnEvent",
+            "count": 1
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "respawn-third-time",
+      "commands": [
+        {
+          "delayTicks": 20,
+          "command": "kill {player}"
+        }
+      ],
+      "instructions": [
+        "Wait for the server to kill you a third time.",
+        "Press Respawn one more time."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "endstone_event_seen",
+            "event": "PlayerRespawnEvent",
+            "count": 1
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 1
+          }
+        ]
+      }
+    }
+  ]
+}
