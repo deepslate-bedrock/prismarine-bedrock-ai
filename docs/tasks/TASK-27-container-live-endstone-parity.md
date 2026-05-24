@@ -3,7 +3,7 @@
 - **Status:** `[/]` active
 - **Owner:** Codex / 2026-05-18
 - **Scope:** Fix the live container integration path so container tests pass on Endstone/BDS and preserve Geyser behavior.
-- **Owned files:** `docs/tasks/TASK-27-container-live-endstone-parity.md`, likely `repos/prismarine-bedrock/src/builtins/containers/index.js`, `repos/prismarine-bedrock/test/live/containers.test.js`, and related command/world-readiness helpers as investigation proves.
+- **Owned files:** `docs/tasks/TASK-27-container-live-endstone-parity.md`, `test/recorded-bds/scenarios/chest-transfer-items.json`, `test/recorded-bds/bots/chest-transfer-items.js`, likely `repos/prismarine-bedrock/src/builtins/containers/index.js`, `repos/prismarine-bedrock/test/live/containers.test.js`, and related command/world-readiness helpers as investigation proves.
 - **Related docs:** workspace `AGENTS.md`, `repos/prismarine-bedrock/test/rules.md`, `docs/tasks/README.md`
 
 ## Goal
@@ -24,6 +24,7 @@ Success means the focused container live test passes on Endstone and Geyser, wit
 - `[x]` Inspect container setup readiness and block-update observation for target-specific differences.
 - `[x]` Inspect `openContainer` interaction packets on Endstone/BDS and compare with Geyser.
 - `[x]` Patch the owning repo: base library runtime/world behavior.
+- `[/]` Run the recorded BDS human-to-bot loop for `chest-transfer-items`.
 - `[~]` Verify `test/live/containers.test.js` on both `--target=java` and `--target=endstone`.
 
 ## Current State
@@ -31,7 +32,8 @@ Success means the focused container live test passes on Endstone and Geyser, wit
 - Worktree state: base repo has task changes in `src/builtins/setup.js`, `src/builtins/world.js`, `src/utils.js`, `test/static/block-runtime-ids.test.js`, and `test/static/world-readiness.test.js`. AI repo still has this task log untracked; other AI/base dirty files were pre-existing or unrelated and were not edited for this task.
 - Already implemented: fixed non-hash Geyser `update_block` mapping when no live block runtime palette is supplied; fixed outbound block interactions to read block state from the synchronous world mirror so `inventory_transaction.item_use.block_runtime_id` is not `0`.
 - In progress: Endstone `container_open` parity is fixed for the open action, but the full live container suite now exposes a later Endstone disconnect on the first container `item_stack_request`.
-- Not started: packet-level diagnosis of Endstone's post-open item transfer disconnect.
+- In progress: created the `chest-transfer-items` recorded-BDS scenario and scaffolded its bot script so the first human recording can capture the exact BDS packet shape for opening a chest, depositing apples, and withdrawing them.
+- Next: run `node scripts/recorded-bds-gym.js record-human --scenario=chest-transfer-items` and have a Bedrock client complete the scenario.
 - Known mismatch between notes and worktree: workspace/base/AI `AGENTS.md` and AI e2e launcher/runtime files are dirty but unrelated to this task and were left untouched.
 
 ## Change Ledger
@@ -45,6 +47,8 @@ Success means the focused container live test passes on Endstone and Geyser, wit
 | `repos/prismarine-bedrock/test/static/world-readiness.test.js` | changed | Covers non-hash no-live-palette update IDs and hash update IDs. |
 | `repos/prismarine-bedrock/test/static/block-runtime-ids.test.js` | changed | Covers synchronous world lookup for outbound block runtime IDs. |
 | `repos/prismarine-bedrock/test/live/containers.test.js` | inspected by execution | Focused live test target; not edited. |
+| `test/recorded-bds/scenarios/chest-transfer-items.json` | added | Human oracle scenario for chest open, inventory-to-chest transfer, and chest-to-inventory transfer. |
+| `test/recorded-bds/bots/chest-transfer-items.js` | added | Gym scaffold for bot recreation; still placeholder pending human trace. |
 
 ## Parallel Subtasks
 
@@ -63,6 +67,9 @@ None.
 - `2026-05-18` - post-fix Geyser trace - PASS. Logs: `logs/container-trace-geyser-after-fix.jsonl`. Notes: support floor/stand remain local `stone` (`stateId=2533`), chest remains `chest` (`stateId=13314`), outbound open carries `block_runtime_id=13314`, and Geyser sends `container_open`.
 - `2026-05-18` - `node scripts/e2e-servers.js launch --target=java --world=superflat --exit-after-client --client-timeout-ms=240000 --client pnpm --dir ../prismarine-bedrock exec mocha --config .mocharc.live.json test/live/containers.test.js` - PASS. Notes: `5 passing`; external player `Generel7050` joined during the brewing section, but the run completed successfully. Raw run directory `.e2e-servers/runs/2026-05-19T01-45-40-970Z`.
 - `2026-05-18` - same focused live command with `--target=endstone` - FAIL/NEXT-LAYER. Notes: `1 passing, 4 failing`; first chest opened, then BDS disconnected after first container item_stack_request (`Inventory action waiters cleared`), causing later setup commands to fail with `No targets matched selector` and later opens to time out. This is no longer the original `container_open`/world mirror failure. Raw run directory `.e2e-servers/runs/2026-05-19T01-47-18-323Z`.
+- `2026-05-18` - `node -e "JSON.parse(require('fs').readFileSync('test/recorded-bds/scenarios/chest-transfer-items.json','utf8')); console.log('scenario json ok')"` - PASS. Notes: scenario JSON parses.
+- `2026-05-18` - `node scripts/recorded-bds-gym.js status --scenario=chest-transfer-items` - PASS. Notes: scenario exists; no completed human/bot/compare runs yet.
+- `2026-05-18` - `node scripts/recorded-bds-gym.js scaffold-bot --scenario=chest-transfer-items` - PASS. Notes: created placeholder bot script.
 
 ## Architecture Notes
 
@@ -80,7 +87,7 @@ The world/opening mismatch is fixed. Continue with a new packet comparison for E
 
 ## Resume Notes
 
-- Next step: packet-record the first Endstone chest transfer after open, focusing on `item_stack_request`, `item_stack_response`, `container_open`, `inventory_content`, and disconnect reason.
+- Next step: run the `chest-transfer-items` human recording, then decode/index and compare the first human transfer packets against the bot recreation.
 - Do not repeat: the original Geyser support-block diagnosis or Endstone open-only trace unless the world/runtime mapping changes again.
 - Raw logs: `.e2e-servers/runs/2026-05-19T01-31-34-118Z`, `.e2e-servers/runs/2026-05-19T01-32-27-279Z`, `.e2e-servers/runs/2026-05-19T01-33-30-257Z`, `.e2e-servers/runs/2026-05-19T01-45-40-970Z`, `.e2e-servers/runs/2026-05-19T01-47-18-323Z`; packet summaries in `logs/container-trace-*.jsonl`. Keep them out of git.
 

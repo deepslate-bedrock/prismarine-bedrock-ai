@@ -1,0 +1,73 @@
+{
+  "id": "chest-transfer-items",
+  "autoOp": true,
+  "gamemode": "survival",
+  "spawn": [0, 65, 0, 0, 0],
+  "setupCommands": [
+    "clear {player}",
+    "time set day",
+    "weather clear",
+    "effect {player} clear",
+    "fill -3 64 -3 3 70 3 air",
+    "fill -3 63 -3 3 63 3 grass_block",
+    "setblock 1 64 0 chest",
+    "give {player} apple 8",
+    "tp {player} 0 65 0 0 0"
+  ],
+  "completeTitle": "Recording complete",
+  "completeMessage": "The chest item transfer recording is complete. You can leave the game.",
+  "steps": [
+    {
+      "id": "open-chest",
+      "instructions": [
+        "Open the chest in front of you."
+      ],
+      "clearance": {
+        "type": "container_open",
+        "container": "chest"
+      }
+    },
+    {
+      "id": "deposit-apples",
+      "instructions": [
+        "Move all 8 apples from your inventory into the chest."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "packet_seen",
+            "direction": "receive",
+            "packet_id": 147,
+            "count": 1
+          },
+          {
+            "type": "inventory_lacks",
+            "item": "minecraft:apple",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "withdraw-apples",
+      "instructions": [
+        "Move the 8 apples from the chest back into your inventory."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "packet_seen",
+            "direction": "receive",
+            "packet_id": 147,
+            "count": 1
+          },
+          {
+            "type": "inventory_contains",
+            "item": "minecraft:apple",
+            "count": 8
+          }
+        ]
+      }
+    }
+  ]
+}
