@@ -23,6 +23,7 @@ List adjacent work that should not be changed during this task.
 ## Current State
 
 Keep this section current while the task is active. A restarted agent should read this before editing.
+Keep it sparse: include only the state needed to resume, with paths or commands for deeper inspection.
 
 - Worktree state:
 - Already implemented:
@@ -49,6 +50,7 @@ Use this section when multiple agents are working independently.
 ## Evidence Log
 
 Record exact commands, target server, date, and result. Keep raw output in `logs/` if it is large.
+Summarize packet evidence by packet name, sequence/request IDs, statuses, and raw log path instead of pasting dumps.
 
 - `YYYY-MM-DD` - `pnpm run test:static` - PASS/FAIL. Notes:
 - `YYYY-MM-DD` - `node scripts/roundtrip-packet.js --example item_stack_take` - PASS/FAIL. Notes:
@@ -64,6 +66,7 @@ Write what the next agent should do first, what is already proven, and what is s
 ## Resume Notes
 
 Write the exact next step for a restarted agent. Include the next command to run or file/line area to inspect.
+Name the smallest file, section, query, or packet range the next agent should inspect first.
 
 - Next step:
 - Do not repeat:

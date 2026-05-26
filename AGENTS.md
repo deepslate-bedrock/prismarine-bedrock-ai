@@ -13,6 +13,17 @@ This repo is optimized for long-running AI work where several agents may split a
 7. Keep runtime/debug artifacts in `logs/` or `scripts/tmp/`; both are gitignored. Commit only the distilled evidence in `docs/tasks/`.
 8. For feature requests that need real Bedrock client behavior, follow `test/recorded-bds/README.md` under `Recorded BDS Workflow`: design a live-client scenario, capture/decode/index logs, compare the live client and bot traces packet by packet for the full action, distill the evidence into tests or an isolated bot recreation, and continue the same loop when later feature requests compound on the active work.
 
+## Context Budget
+
+Keep durable evidence high-signal and keep chat context small. Pull the narrowest context that can answer the next decision.
+
+- Start with indexes and summaries: `rg`, `rg --files`, `git diff --stat`, `git status --short`, task-log headings, and focused packet indexes. Open whole files only after a targeted search points there.
+- For task logs, first read `Current State`, `Change Ledger`, `Evidence Log`, `Resume Notes`, and `Final Summary` or `Failure Summary`. Read older timeline entries only when they directly explain the active failure or design choice.
+- For recorded packet evidence, query decoded JSONL/SQLite for the packet names, sequence ranges, request IDs, and statuses needed. Do not load raw packet dumps into chat; store raw output in `logs/` and summarize the relevant rows.
+- For reference checkouts under `ref/`, search exact symbols, packet names, or enum names before opening files. Treat reference code as inspection-only and avoid broad source tours.
+- When updating docs/tasks, write compact, resume-ready notes: what changed, what was proven, exact commands and pass/fail, raw log paths, and the next command or file/line to inspect.
+- When delegating to agents, give each agent a bounded owned scope, exact paths/search terms, and a concise expected output. Ask for file paths changed or precise evidence found, not a general recap of the subsystem.
+
 ## Explicit Workflow Triggers
 
 When the user says any of these phrases, run the feature implementation mode in `test/recorded-bds/README.md` under `Recorded BDS Workflow`:

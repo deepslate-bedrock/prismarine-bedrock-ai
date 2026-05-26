@@ -41,6 +41,15 @@ Do not commit:
 
 Put raw investigation output in the gitignored `logs/` directory and summarize the evidence in the task log.
 
+## Context Discipline
+
+Task logs should help the next agent resume without loading old chat or raw artifacts.
+
+- Keep `Current State`, `Change Ledger`, `Evidence Log`, and `Resume Notes` compact and current.
+- Prefer short evidence summaries with exact command lines, pass/fail, packet names, request IDs, statuses, and raw log paths.
+- Do not paste full diffs, broad packet dumps, or long command output. Store large output in `logs/` and name the focused query that produced the summary.
+- When listing parallel work, include owned paths and the exact expected output so sub-agents can inspect sparsely.
+
 ## Required Sections
 
 Each active task log should keep these sections current:

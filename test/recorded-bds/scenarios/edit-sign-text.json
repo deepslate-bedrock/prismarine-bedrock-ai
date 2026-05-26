@@ -1,0 +1,42 @@
+{
+  "id": "edit-sign-text",
+  "autoOp": true,
+  "gamemode": "creative",
+  "spawn": [0, 65, 0, 0, 0],
+  "setupCommands": [
+    "time set day",
+    "weather clear",
+    "effect {player} clear",
+    "fill -3 64 -3 3 68 6 air",
+    "fill -3 63 -3 3 63 6 grass_block",
+    "setblock 0 64 3 standing_sign",
+    "tp {player} 0 65 0 0 0"
+  ],
+  "steps": [
+    {
+      "id": "edit-front-text",
+      "instructions": [
+        "Walk to the sign at 0 64 3.",
+        "Open the sign editor.",
+        "Set the front text to exactly: Alpha / Beta / Gamma, one word per line.",
+        "Close or confirm the sign editor so the text appears on the sign."
+      ],
+      "clearance": {
+        "all": [
+          {
+            "type": "packet_seen",
+            "direction": "send",
+            "packet_id": 303,
+            "count": 1
+          },
+          {
+            "type": "packet_seen",
+            "direction": "receive",
+            "packet_id": 56,
+            "count": 1
+          }
+        ]
+      }
+    }
+  ]
+}
