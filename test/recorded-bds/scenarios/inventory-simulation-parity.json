@@ -1,0 +1,541 @@
+{
+  "id": "inventory-simulation-parity",
+  "autoOp": true,
+  "gamemode": "survival",
+  "spawn": [0, 65, -3, 0, 0],
+  "checkPeriodTicks": 10,
+  "setupCommands": [
+    "gamerule doDaylightCycle false",
+    "time set day",
+    "weather clear",
+    "effect {player} clear",
+    "fill -4 64 -6 6 70 6 air",
+    "fill -4 63 -6 6 63 6 grass_block",
+    "setblock 1 64 0 chest",
+    "setblock 3 64 0 crafting_table",
+    "tp {player} 0 65 -3 0 0"
+  ],
+  "completeTitle": "Inventory parity complete",
+  "completeMessage": "The inventory simulation packet recording is complete. Leave the game so the final scenario_end marker is written.",
+  "notes": [
+    "This is a human-operated packet capture scenario for inventory simulation.",
+    "Decode packet ids 30, 46, 47, 49, 50, 147, and 148 after recording.",
+    "Each step marker bounds one visible user action or one intentionally-fast chain.",
+    "Read-ahead text is included because inventory and container screens can hide the next prompt.",
+    "After each listed action, pause briefly for the scenario to advance before continuing with the next read-ahead action."
+  ],
+  "steps": [
+    {
+      "id": "p1-pick-up-full-stack-to-cursor",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} diamond 3",
+        "give {player} stick 5",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - P1 then P2:",
+        "1. Open your inventory and left-click the dirt stack so all 7 dirt are on your cursor.",
+        "2. Pause briefly for this step to complete. Keep the inventory open if possible.",
+        "3. Next prompt may be hidden: left-click an empty hotbar slot to place the full dirt stack.",
+        "Do not do action 3 until this P1 step has completed."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "p2-place-full-cursor-into-empty-slot",
+      "instructions": [
+        "Continue the P1/P2 read-ahead sequence.",
+        "With the dirt still on your cursor, left-click an empty hotbar slot to place the full stack.",
+        "Pause after the click so this step can complete."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "p3-split-stack-to-cursor",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} diamond 3",
+        "give {player} stick 5",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - P3 through P5:",
+        "1. Open your inventory and right-click the dirt stack so the larger half is on your cursor.",
+        "2. After P3 completes, right-click one empty slot once. Keep any remaining dirt on your cursor.",
+        "3. After P4 completes, left-click the one-dirt stack to merge the cursor back into it.",
+        "Do not do action 2 until this P3 step has completed."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "p4-place-one-from-cursor",
+      "instructions": [
+        "Continue the P3-P5 read-ahead sequence.",
+        "With the split dirt still on your cursor, right-click one empty slot once.",
+        "Keep any remaining dirt on your cursor, then pause for this step to complete."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "p5-merge-cursor-into-compatible-stack",
+      "instructions": [
+        "Continue the P3-P5 read-ahead sequence.",
+        "With dirt still on your cursor, left-click the one-dirt stack you just created.",
+        "The cursor should merge into that compatible stack. Pause after the click."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "p6-swap-cursor-with-incompatible-slot",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} diamond 3",
+        "give {player} stick 5",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - all actions are in this step:",
+        "1. Open your inventory and left-click the diamond stack to put it on your cursor.",
+        "2. Left-click the stick stack so diamond and stick swap.",
+        "3. Left-click an empty slot to place whatever remains on your cursor.",
+        "Pause after action 3 so this step can complete."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 3 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 3 }
+        ]
+      }
+    },
+    {
+      "id": "p7-drop-full-cursor-stack-outside",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} stick 5",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - all actions are in this step:",
+        "1. Open your inventory and left-click the stick stack to put all 5 sticks on your cursor.",
+        "2. Left-click outside the inventory to drop the full cursor stack.",
+        "Pause after the outside click."
+      ],
+      "clearance": {
+        "any": [
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+              { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+            ]
+          },
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 30, "count": 1 },
+              { "type": "time_elapsed", "seconds": 1.0 }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "p8-drop-one-cursor-item-outside",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} stick 5",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - all actions are in this step:",
+        "1. Open your inventory and left-click the stick stack to put all 5 sticks on your cursor.",
+        "2. Right-click outside the inventory once to drop one item from the cursor.",
+        "Pause after the outside click."
+      ],
+      "clearance": {
+        "any": [
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+              { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+            ]
+          },
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 30, "count": 1 },
+              { "type": "time_elapsed", "seconds": 1.0 }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "p9-drop-one-from-slot",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY:",
+        "Open your inventory, hover the dirt stack, and press the normal drop-one key once.",
+        "Pause after the key press."
+      ],
+      "clearance": {
+        "any": [
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+              { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+            ]
+          },
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 30, "count": 1 },
+              { "type": "time_elapsed", "seconds": 1.0 }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "p10-creative-destroy-stack",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} diamond 3",
+        "gamemode creative {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - creative mode:",
+        "1. Open your inventory and pick up the diamond stack.",
+        "2. Destroy/delete the cursor stack using the creative inventory delete/drop target.",
+        "Pause after deleting the cursor stack."
+      ],
+      "clearance": {
+        "any": [
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+              { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 }
+            ]
+          },
+          {
+            "all": [
+              { "type": "packet_seen", "direction": "receive", "packet_id": 30, "count": 1 },
+              { "type": "time_elapsed", "seconds": 1.0 }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "u1-fast-pick-up-then-place",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - fast chain in one step:",
+        "As fast as possible, left-click the dirt stack and then left-click an empty slot.",
+        "This step is intended to show whether the client sends one request, two requests, or an unconfirmed prediction."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "time_elapsed", "seconds": 2.0 }
+        ]
+      }
+    },
+    {
+      "id": "u2-fast-split-place-merge",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} dirt 7",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - fast chain in one step:",
+        "As fast as possible: right-click the dirt stack, right-click an empty slot once, then left-click that new dirt stack.",
+        "This should capture chained predictions and any unconfirmed stack-id behavior."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "time_elapsed", "seconds": 2.0 }
+        ]
+      }
+    },
+    {
+      "id": "c1-manual-2x2-log-to-planks",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} oak_log 1",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - 2x2 manual crafting:",
+        "1. Open your player inventory and manually put the oak log into the 2x2 crafting grid.",
+        "2. Take the oak planks result into your inventory.",
+        "Pause after the planks are in your inventory."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 },
+          { "type": "inventory_contains", "item": "minecraft:oak_planks", "count": 4 }
+        ]
+      }
+    },
+    {
+      "id": "c2-recipe-book-2x2-log-to-planks",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} oak_log 2",
+        "gamemode survival {player}"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING INVENTORY - 2x2 recipe book crafting:",
+        "Open your player inventory, use the recipe book to craft all possible oak planks from the two oak logs, then leave the planks in your inventory.",
+        "Pause after the planks are created."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 1 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 1 },
+          { "type": "inventory_contains", "item": "minecraft:oak_planks", "count": 8 }
+        ]
+      }
+    },
+    {
+      "id": "c3-open-crafting-table",
+      "setupCommands": [
+        "clear {player}",
+        "give {player} oak_planks 3",
+        "give {player} stick 2",
+        "gamemode survival {player}",
+        "setblock 3 64 0 crafting_table",
+        "tp {player} 3 65 -3 0 0"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING CRAFTING TABLE - C3 then C4:",
+        "1. Open the crafting table in front of you.",
+        "2. After C3 completes, manually craft a wooden pickaxe: 3 planks across the top row, 1 stick in the center, 1 stick below it.",
+        "3. Take the wooden pickaxe result into your inventory."
+      ],
+      "clearance": {
+        "type": "container_open",
+        "direction": "send",
+        "packet_id": 46,
+        "count": 1,
+        "container": "workbench"
+      }
+    },
+    {
+      "id": "c4-manual-crafting-table-pickaxe",
+      "instructions": [
+        "Continue the C3/C4 read-ahead sequence.",
+        "Manually place 3 oak planks and 2 sticks into the crafting table recipe for a wooden pickaxe.",
+        "Take the wooden pickaxe result into your inventory, then pause."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 5 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 5 },
+          { "type": "inventory_contains", "item": "minecraft:wooden_pickaxe", "count": 1 }
+        ]
+      }
+    },
+    {
+      "id": "h1-open-empty-chest",
+      "setupCommands": [
+        "clear {player}",
+        "setblock 1 64 0 air",
+        "setblock 1 64 0 chest",
+        "give {player} diamond 3",
+        "give {player} stick 5",
+        "give {player} dirt 7",
+        "gamemode survival {player}",
+        "tp {player} 1 65 -3 0 0"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING CHEST - H1 through H5:",
+        "1. Open the chest in front of you.",
+        "2. After H1 completes, move the full diamond stack from your inventory into chest slot 0.",
+        "3. After H2 completes, move exactly 3 dirt from your inventory into an empty chest slot.",
+        "4. After H3 completes, move the diamond stack from chest slot 0 back into an empty player inventory slot.",
+        "5. After H4 completes, merge the remaining player dirt stack with the dirt stack in the chest.",
+        "Keep the chest open between these steps and pause briefly after each action."
+      ],
+      "clearance": {
+        "type": "container_open",
+        "direction": "send",
+        "packet_id": 46,
+        "count": 1,
+        "container": "chest"
+      }
+    },
+    {
+      "id": "h2-put-full-stack-into-empty-chest-slot",
+      "instructions": [
+        "Continue the H1-H5 read-ahead sequence.",
+        "Move the full diamond stack from your inventory into chest slot 0.",
+        "This should include both the pickup and the placement into the chest. Pause after the stack is in the chest."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "h3-put-partial-stack-into-empty-chest-slot",
+      "instructions": [
+        "Continue the H1-H5 read-ahead sequence.",
+        "Move exactly 3 dirt from your inventory into an empty chest slot.",
+        "This should include both the pickup/split and the placement into the chest. Pause after the dirt is in the chest."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "h4-take-full-stack-from-chest-to-empty-inventory-slot",
+      "instructions": [
+        "Continue the H1-H5 read-ahead sequence.",
+        "Move the diamond stack from chest slot 0 back into an empty player inventory slot.",
+        "This should include both the pickup from the chest and placement into your inventory. Pause after the stack is back in your inventory."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "h5-merge-compatible-player-and-chest-stacks",
+      "instructions": [
+        "Continue the H1-H5 read-ahead sequence.",
+        "Merge the remaining player dirt stack with the dirt stack in the chest.",
+        "Use the normal UI drag/click behavior you would use to combine the stacks, then pause after the cursor is empty."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 2 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 2 }
+        ]
+      }
+    },
+    {
+      "id": "h6-swap-incompatible-chest-and-inventory-stacks",
+      "setupCommands": [
+        "clear {player}",
+        "setblock 1 64 0 air",
+        "setblock 1 64 0 chest",
+        "give {player} diamond 3",
+        "give {player} stick 5",
+        "gamemode survival {player}",
+        "tp {player} 1 65 -3 0 0"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING CHEST - all actions are in this step:",
+        "1. Open the chest.",
+        "2. Move the diamond stack into chest slot 0.",
+        "3. Swap that chest diamond stack with the stick stack in your inventory.",
+        "Leave the chest open and pause when the swap is done."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "send", "packet_id": 46, "count": 1 },
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 5 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 5 }
+        ]
+      }
+    },
+    {
+      "id": "h7-move-stack-within-chest",
+      "setupCommands": [
+        "clear {player}",
+        "setblock 1 64 0 air",
+        "setblock 1 64 0 chest",
+        "give {player} diamond 3",
+        "gamemode survival {player}",
+        "tp {player} 1 65 -3 0 0"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING CHEST - all actions are in this step:",
+        "1. Open the chest.",
+        "2. Move the diamond stack from your inventory into chest slot 0.",
+        "3. Move the same diamond stack from chest slot 0 to another empty chest slot.",
+        "Pause after action 3."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "send", "packet_id": 46, "count": 1 },
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 4 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 4 }
+        ]
+      }
+    },
+    {
+      "id": "h8-close-chest-with-cursor-item",
+      "setupCommands": [
+        "clear {player}",
+        "setblock 1 64 0 air",
+        "setblock 1 64 0 chest",
+        "give {player} diamond 3",
+        "gamemode survival {player}",
+        "tp {player} 1 65 -3 0 0"
+      ],
+      "instructions": [
+        "READ BEFORE OPENING CHEST - all actions are in this step:",
+        "1. Open the chest.",
+        "2. Move the diamond stack into chest slot 0.",
+        "3. Pick up the chest diamond stack onto your cursor.",
+        "4. Close the chest while still carrying the diamond stack.",
+        "Pause after closing the chest."
+      ],
+      "clearance": {
+        "all": [
+          { "type": "packet_seen", "direction": "send", "packet_id": 46, "count": 1 },
+          { "type": "packet_seen", "direction": "receive", "packet_id": 147, "count": 3 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 148, "count": 3 },
+          { "type": "packet_seen", "direction": "send", "packet_id": 47, "count": 1 },
+          { "type": "time_elapsed", "seconds": 1.0 }
+        ]
+      }
+    }
+  ]
+}

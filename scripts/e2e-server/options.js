@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const DEFAULT_ENDSTONE_PACKAGE = "endstone";
+const DEFAULT_ENDSTONE_PACKAGE = "endstone==0.11.3";
 
 function parseCli(argv) {
   const command = argv[2] || "help";

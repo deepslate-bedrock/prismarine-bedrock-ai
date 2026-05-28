@@ -3,6 +3,7 @@
 const assert = require('assert')
 
 const {
+  DEFAULT_ENDSTONE_PACKAGE,
   parseCli,
   parseOptions,
   shellJoin,
@@ -10,6 +11,21 @@ const {
 } = require('../../scripts/e2e-server/options')
 
 describe('e2e server options', function () {
+  it('pins the default Endstone package for the 1.26.12 BDS test server', function () {
+    const previous = process.env.E2E_ENDSTONE_PACKAGE
+    try {
+      delete process.env.E2E_ENDSTONE_PACKAGE
+      assert.strictEqual(DEFAULT_ENDSTONE_PACKAGE, 'endstone==0.11.3')
+      assert.strictEqual(parseOptions([]).endstonePackage, 'endstone==0.11.3')
+
+      process.env.E2E_ENDSTONE_PACKAGE = 'endstone==0.10.18'
+      assert.strictEqual(parseOptions([]).endstonePackage, 'endstone==0.10.18')
+    } finally {
+      if (previous === undefined) delete process.env.E2E_ENDSTONE_PACKAGE
+      else process.env.E2E_ENDSTONE_PACKAGE = previous
+    }
+  })
+
   it('preserves quoted client arguments passed after --client', function () {
     const options = parseOptions([
       '--target=java',

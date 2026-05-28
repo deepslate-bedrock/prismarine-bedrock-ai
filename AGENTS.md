@@ -358,12 +358,11 @@ rg -n "bedrockSlotToJava|javaSlotToBedrock|ContainerSlotType" ref\geyser\core\sr
 When the user asks for "a test server that packet logs for Endstone 1.26.12" or similar, run the current Endstone/BDS packet-recorder server:
 
 ```powershell
-$env:E2E_ENDSTONE_PACKAGE='endstone'
 $env:MC_VERSION='1.26.10'
 node scripts/e2e-servers.js launch --target=endstone --world=superflat --endstone-packet-recorder
 ```
 
-This starts the latest published Endstone package, which currently serves BDS `1.26.12.2`, on Bedrock UDP `19132` by default. Use `MC_VERSION=1.26.10` for this repo's installed Bedrock protocol data when decoding packets or running bot clients against that server; direct `MC_VERSION=1.26.12` is not available unless matching local `minecraft-data`/registry data has been added.
+This starts the pinned default Endstone package `endstone==0.11.3`, which serves BDS `1.26.12.2`, on Bedrock UDP `19132` by default. Use `MC_VERSION=1.26.10` for this repo's installed Bedrock protocol data when decoding packets or running bot clients against that server; direct `MC_VERSION=1.26.12` is not available unless matching local `minecraft-data`/registry data has been added.
 
 Useful packet-recorder variants:
 

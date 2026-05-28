@@ -92,7 +92,7 @@ async function installJavaGeyser(instance, options) {
 }
 
 async function installEndstone(instance, options) {
-  const source = options.endstonePackage || "endstone";
+  const source = options.endstonePackage;
   const cache = endstonePackageCache(source);
   instance.endstoneVenvDir = cache.venvDir;
   instance.endstoneTemplateDir = cache.templateDir;
